@@ -1,0 +1,5 @@
+from .studentviewset import StudentViewSet
+from .courseviewset import CourseViewSet
+from .teacherviewset import TeacherViewSet
+from .semesterviewset import SemesterViewSet
+from .studentteachercoursesemesterviewset import StudentTeacherCourseSemesterViewSet
