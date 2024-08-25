@@ -7,7 +7,7 @@ from university.serializers.serializers import CourseSerializer
 class CourseViewSet(viewsets.ViewSet):
 
     def list(self, request):
-        queryset = Course.objects.all()
+        queryset = Course.objects.values('id','name','code','credits','department')
         serializer = CourseSerializer(queryset, many=True)
         return Response(serializer.data)
 

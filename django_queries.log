@@ -1,0 +1,47 @@
+(0.000) 
+                SELECT VERSION(),
+                       @@sql_mode,
+                       @@default_storage_engine,
+                       @@sql_auto_is_null,
+                       @@lower_case_table_names,
+                       CONVERT_TZ('2001-01-01 01:00:00', 'UTC', 'UTC') IS NOT NULL
+            ; args=None; alias=default
+(0.000) SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED; args=None; alias=default
+(0.016) 
+            SELECT
+                table_name,
+                table_type,
+                table_comment
+            FROM information_schema.tables
+            WHERE table_schema = DATABASE()
+            ; args=None; alias=default
+(0.000) SELECT `django_migrations`.`id`, `django_migrations`.`app`, `django_migrations`.`name`, `django_migrations`.`applied` FROM `django_migrations`; args=(); alias=default
+(0.000) 
+                SELECT VERSION(),
+                       @@sql_mode,
+                       @@default_storage_engine,
+                       @@sql_auto_is_null,
+                       @@lower_case_table_names,
+                       CONVERT_TZ('2001-01-01 01:00:00', 'UTC', 'UTC') IS NOT NULL
+            ; args=None; alias=default
+(0.000) SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED; args=None; alias=default
+(0.000) SELECT `student`.`id`, `student`.`user_id`, `student`.`department_id`, `student`.`deleted`, `student`.`created`, `student`.`updated` FROM `student` WHERE `student`.`id` = 1 LIMIT 21; args=(1,); alias=default
+(0.015) SELECT `student_teacher_course_semester`.`id`, `student_teacher_course_semester`.`student_id`, `student_teacher_course_semester`.`teacher_course_semester_id`, `student_teacher_course_semester`.`grade`, `student_teacher_course_semester`.`status`, `student_teacher_course_semester`.`created`, `student_teacher_course_semester`.`updated`, `teacher_course_semester`.`id`, `teacher_course_semester`.`teacher_id`, `teacher_course_semester`.`course_id`, `teacher_course_semester`.`semester_id`, `teacher_course_semester`.`deleted`, `teacher_course_semester`.`created`, `teacher_course_semester`.`updated`, `course`.`id`, `course`.`name`, `course`.`code`, `course`.`credits`, `course`.`department_id`, `course`.`deleted`, `course`.`created`, `course`.`updated` FROM `student_teacher_course_semester` INNER JOIN `teacher_course_semester` ON (`student_teacher_course_semester`.`teacher_course_semester_id` = `teacher_course_semester`.`id`) INNER JOIN `course` ON (`teacher_course_semester`.`course_id` = `course`.`id`) WHERE `student_teacher_course_semester`.`student_id` = 1; args=(1,); alias=default
+(0.000) 
+                SELECT VERSION(),
+                       @@sql_mode,
+                       @@default_storage_engine,
+                       @@sql_auto_is_null,
+                       @@lower_case_table_names,
+                       CONVERT_TZ('2001-01-01 01:00:00', 'UTC', 'UTC') IS NOT NULL
+            ; args=None; alias=default
+(0.000) SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED; args=None; alias=default
+(0.016) 
+            SELECT
+                table_name,
+                table_type,
+                table_comment
+            FROM information_schema.tables
+            WHERE table_schema = DATABASE()
+            ; args=None; alias=default
+(0.000) SELECT `django_migrations`.`id`, `django_migrations`.`app`, `django_migrations`.`name`, `django_migrations`.`applied` FROM `django_migrations`; args=(); alias=default

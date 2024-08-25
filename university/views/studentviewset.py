@@ -22,16 +22,6 @@ class StudentViewSet(viewsets.ViewSet):
         courses = StudentTeacherCourseSemester.objects.filter(student=student).select_related(
             'teacher_course_semester__course')
 
-        course_data = [
-            {
-                'id': course.teacher_course_semester.course.id,
-                'name': course.teacher_course_semester.course.name,
-                'code': course.teacher_course_semester.course.code,
-            }
-            for course in courses
-        ]
-
-        response.data['courses'] = course_data
         return response
 
     def create(self, request):
