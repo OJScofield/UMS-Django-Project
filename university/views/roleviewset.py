@@ -1,31 +1,25 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from university.models.models import Student, StudentTeacherCourseSemester
-from university.serializers.serializers import StudentSerializer
+from university.models import Role
+from university.serializers import RoleSerializer
 
-class StudentViewSet(viewsets.ViewSet):
+class RoleViewSet(viewsets.ViewSet):
 
     def list(self, request):
-        queryset = Student.objects.all()
-        serializer = StudentSerializer(queryset, many=True)
+        queryset = Role.objects.all()
+        serializer = RoleSerializer(queryset, many=True, model=Role)
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
         try:
-            student = Student.objects.get(pk=pk)
-        except Student.DoesNotExist:
+            role = Role.objects.get(pk=pk)
+        except Role.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-
-        serializer = StudentSerializer(student)
-        response = Response(serializer.data)
-
-        courses = StudentTeacherCourseSemester.objects.filter(student=student).select_related(
-            'teacher_course_semester__course')
-
-        return response
+        serializer = RoleSerializer(role, model=Role)
+        return Response(serializer.data)
 
     def create(self, request):
-        serializer = StudentSerializer(data=request.data)
+        serializer = RoleSerializer(data=request.data, model=Role)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -33,10 +27,10 @@ class StudentViewSet(viewsets.ViewSet):
 
     def update(self, request, pk=None):
         try:
-            student = Student.objects.get(pk=pk)
-        except Student.DoesNotExist:
+            role = Role.objects.get(pk=pk)
+        except Role.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = StudentSerializer(student, data=request.data)
+        serializer = RoleSerializer(role, data=request.data, model=Role)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -44,8 +38,8 @@ class StudentViewSet(viewsets.ViewSet):
 
     def destroy(self, request, pk=None):
         try:
-            student = Student.objects.get(pk=pk)
-        except Student.DoesNotExist:
+            role = Role.objects.get(pk=pk)
+        except Role.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        student.delete()
+        role.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

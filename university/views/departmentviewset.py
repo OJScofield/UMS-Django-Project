@@ -1,25 +1,25 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from university.models.models import Teacher
-from university.serializers.serializers import TeacherSerializer
+from university.models import Department
+from university.serializers import DepartmentSerializer
 
-class TeacherViewSet(viewsets.ViewSet):
+class DepartmentViewSet(viewsets.ViewSet):
 
     def list(self, request):
-        queryset = Teacher.objects.all()
-        serializer = TeacherSerializer(queryset, many=True)
+        queryset = Department.objects.all()
+        serializer = DepartmentSerializer(queryset, many=True, model=Department)
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
         try:
-            teacher = Teacher.objects.get(pk=pk)
-        except Teacher.DoesNotExist:
+            department = Department.objects.get(pk=pk)
+        except Department.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = TeacherSerializer(teacher)
+        serializer = DepartmentSerializer(department, model=Department)
         return Response(serializer.data)
 
     def create(self, request):
-        serializer = TeacherSerializer(data=request.data)
+        serializer = DepartmentSerializer(data=request.data, model=Department)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -27,10 +27,10 @@ class TeacherViewSet(viewsets.ViewSet):
 
     def update(self, request, pk=None):
         try:
-            teacher = Teacher.objects.get(pk=pk)
-        except Teacher.DoesNotExist:
+            department = Department.objects.get(pk=pk)
+        except Department.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = TeacherSerializer(teacher, data=request.data)
+        serializer = DepartmentSerializer(department, data=request.data, model=Department)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -38,8 +38,8 @@ class TeacherViewSet(viewsets.ViewSet):
 
     def destroy(self, request, pk=None):
         try:
-            teacher = Teacher.objects.get(pk=pk)
-        except Teacher.DoesNotExist:
+            department = Department.objects.get(pk=pk)
+        except Department.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        teacher.delete()
+        department.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

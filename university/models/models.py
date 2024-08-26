@@ -22,6 +22,7 @@ class User(models.Model):
 
 class Department(models.Model):
     name = models.CharField(max_length=100, unique=True, default='Default Department')
+    code = models.CharField(max_length=100, default='BUILDING001')
     building = models.CharField(max_length=100, default='Main Building')
     deleted = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
@@ -37,6 +38,7 @@ class Department(models.Model):
 class Student(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     department = models.ForeignKey(Department, on_delete=models.CASCADE, default=1)
+    student_year = models.IntegerField(default=1)
     deleted = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -64,7 +66,7 @@ class Teacher(models.Model):
 
 class Course(models.Model):
     name = models.CharField(max_length=100, unique=True, default='Untitled Course')
-    code = models.CharField(max_length=20, unique=True, default='COURSE100')
+    code = models.CharField(max_length=100, unique=True, default='COURSE100')
     credits = models.IntegerField(default=3)
     department = models.ForeignKey(Department, on_delete=models.CASCADE, default=1)
     deleted = models.BooleanField(default=False)
@@ -134,3 +136,70 @@ class StudentTeacherCourseSemester(models.Model):
 
     class Meta:
         db_table = 'student_teacher_course_semester'
+
+class FeedbackCategory(models.Model):
+    name = models.CharField(max_length=100, unique=True, default='Feedback Category')
+    code = models.CharField(max_length=100, unique=True, default='Feedback Category Code')
+    deleted = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = 'feedback_category'
+
+
+class Feedback(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+    teacher_course_semester = models.ForeignKey(TeacherCourseSemester, on_delete=models.CASCADE, default=1)
+    comment = models.CharField(max_length=255, default='Comment')
+    feedback_category = models.ForeignKey(FeedbackCategory, on_delete=models.CASCADE, default=1)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user} - {self.teacher_course_semester} - {self.comment}"
+
+    class Meta:
+        db_table = 'feedback'
+
+
+class Role(models.Model):
+    code = models.CharField(max_length=100, unique=True, default='Role Code')
+    name = models.CharField(max_length=100, unique=True, default='Role Name')
+    deleted = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.code} - {self.name}"
+
+    class Meta:
+        db_table = 'role'
+
+
+class UserRole(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+    role = models.ForeignKey(Role, on_delete=models.CASCADE, default=1)
+
+    def __str__(self):
+        return f"{self.user} - {self.role}"
+
+    class Meta:
+        db_table = 'user_role'
+
+
+class CoursePrerequisite(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='prerequisites', default=1)
+    prerequisite_course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='required_for', default=1)
+    deleted = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.course} - {self.prerequisite_course}"
+
+    class Meta:
+        db_table = 'course_prerequisite'

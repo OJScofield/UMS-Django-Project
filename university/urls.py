@@ -1,70 +1,16 @@
-from django.urls import path
-from university.views import *
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from university.views import CourseViewSet, DepartmentViewSet, FeedbackViewSet, UserViewSet, TeacherCourseSemesterViewSet, RoleViewSet
 
-student_list = StudentViewSet.as_view({
-    'get': 'list',
-    'post': 'create'
-})
+router = DefaultRouter()
 
-student_detail = StudentViewSet.as_view({
-    'get': 'retrieve',
-    'put': 'update',
-    'delete': 'destroy'
-})
-
-teacher_list = TeacherViewSet.as_view({
-    'get': 'list',
-    'post': 'create'
-})
-
-teacher_detail = TeacherViewSet.as_view({
-    'get': 'retrieve',
-    'put': 'update',
-    'delete': 'destroy'
-})
-
-semester_list = SemesterViewSet.as_view({
-    'get': 'list',
-    'post': 'create'
-})
-
-semester_detail = SemesterViewSet.as_view({
-    'get': 'retrieve',
-    'put': 'update',
-    'delete': 'destroy'
-})
-
-student_teacher_course_semester_list = StudentTeacherCourseSemesterViewSet.as_view({
-    'get': 'list',
-    'post': 'create'
-})
-
-student_teacher_course_semester_detail = StudentTeacherCourseSemesterViewSet.as_view({
-    'get': 'retrieve',
-    'put': 'update',
-    'delete': 'destroy'
-})
-
-course_list = CourseViewSet.as_view({
-    'get': 'list',
-    'post': 'create'
-})
-
-course_detail = CourseViewSet.as_view({
-    'get': 'retrieve',
-    'put': 'update',
-    'delete': 'destroy'
-})
+router.register(r'courses', CourseViewSet, basename='course')
+router.register(r'departments', DepartmentViewSet, basename='department')
+router.register(r'feedback', FeedbackViewSet, basename='feedback')
+router.register(r'users', UserViewSet, basename='user')
+router.register(r'teacher_courses', TeacherCourseSemesterViewSet, basename='teacher-course-semester')
+router.register(r'roles', RoleViewSet, basename='role')
 
 urlpatterns = [
-    path('students/', student_list, name='student-list'),
-    path('students/<int:pk>/', student_detail, name='student-detail'),
-    path('teachers/', teacher_list, name='teacher-list'),
-    path('teachers/<int:pk>/', teacher_detail, name='teacher-detail'),
-    path('semesters/', semester_list, name='semester-list'),
-    path('semesters/<int:pk>/', semester_detail, name='semester-detail'),
-    path('student-teacher-course-semester/', student_teacher_course_semester_list, name='student-teacher-course-semester-list'),
-    path('student-teacher-course-semester/<int:pk>/', student_teacher_course_semester_detail, name='student-teacher-course-semester-detail'),
-    path('courses/', course_list, name='course-list'),
-    path('courses/<int:pk>/', course_detail, name='course-detail'),
+    path('', include(router.urls)),
 ]

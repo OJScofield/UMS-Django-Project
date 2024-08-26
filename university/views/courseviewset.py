@@ -1,14 +1,13 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from university.models.models import Course
-from university.serializers.serializers import CourseSerializer
-
+from university.models import Course
+from university.serializers import CourseSerializer
 
 class CourseViewSet(viewsets.ViewSet):
 
     def list(self, request):
-        queryset = Course.objects.values('id','name','code','credits','department')
-        serializer = CourseSerializer(queryset, many=True)
+        queryset = Course.objects.all()
+        serializer = CourseSerializer(queryset, many=True, model=Course)
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
@@ -16,11 +15,11 @@ class CourseViewSet(viewsets.ViewSet):
             course = Course.objects.get(pk=pk)
         except Course.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = CourseSerializer(course)
+        serializer = CourseSerializer(course, model=Course)
         return Response(serializer.data)
 
     def create(self, request):
-        serializer = CourseSerializer(data=request.data)
+        serializer = CourseSerializer(data=request.data, model=Course)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -31,7 +30,7 @@ class CourseViewSet(viewsets.ViewSet):
             course = Course.objects.get(pk=pk)
         except Course.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = CourseSerializer(course, data=request.data)
+        serializer = CourseSerializer(course, data=request.data, model=Course)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

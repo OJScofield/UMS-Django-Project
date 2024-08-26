@@ -1,25 +1,25 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from university.models.models import Semester
-from university.serializers.serializers import SemesterSerializer
+from university.models import Feedback
+from university.serializers import FeedbackSerializer
 
-class SemesterViewSet(viewsets.ViewSet):
+class FeedbackViewSet(viewsets.ViewSet):
 
     def list(self, request):
-        queryset = Semester.objects.all()
-        serializer = SemesterSerializer(queryset, many=True)
+        queryset = Feedback.objects.all()
+        serializer = FeedbackSerializer(queryset, many=True, model=Feedback)
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
         try:
-            semester = Semester.objects.get(pk=pk)
-        except Semester.DoesNotExist:
+            feedback = Feedback.objects.get(pk=pk)
+        except Feedback.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = SemesterSerializer(semester)
+        serializer = FeedbackSerializer(feedback, model=Feedback)
         return Response(serializer.data)
 
     def create(self, request):
-        serializer = SemesterSerializer(data=request.data)
+        serializer = FeedbackSerializer(data=request.data, model=Feedback)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -27,10 +27,10 @@ class SemesterViewSet(viewsets.ViewSet):
 
     def update(self, request, pk=None):
         try:
-            semester = Semester.objects.get(pk=pk)
-        except Semester.DoesNotExist:
+            feedback = Feedback.objects.get(pk=pk)
+        except Feedback.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = SemesterSerializer(semester, data=request.data)
+        serializer = FeedbackSerializer(feedback, data=request.data, model=Feedback)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -38,8 +38,8 @@ class SemesterViewSet(viewsets.ViewSet):
 
     def destroy(self, request, pk=None):
         try:
-            semester = Semester.objects.get(pk=pk)
-        except Semester.DoesNotExist:
+            feedback = Feedback.objects.get(pk=pk)
+        except Feedback.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        semester.delete()
+        feedback.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
