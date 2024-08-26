@@ -1,7 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from university.models import User, Student, Teacher
-from university.serializers import UserSerializer
+from university.serializers import UserSerializer, StudentSerializer, TeacherSerializer
 
 class UserViewSet(viewsets.ViewSet):
 
