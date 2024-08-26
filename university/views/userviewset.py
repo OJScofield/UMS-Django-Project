@@ -2,15 +2,16 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from university.models import User, Student, Teacher
 from university.serializers import UserSerializer, StudentSerializer, TeacherSerializer
+from university.constants import *
 
 class UserViewSet(viewsets.ViewSet):
 
     def list(self, request):
         user_type = request.query_params.get('user_type', None)
-        if user_type == 'STUDENT':
+        if user_type == USER_TYPE_STUDENT:
             queryset = Student.objects.all()
             serializer = UserSerializer(queryset, many=True, model=User)
-        elif user_type == 'TEACHER':
+        elif user_type == USER_TYPE_TEACHER:
             queryset = Teacher.objects.all()
             serializer = UserSerializer(queryset, many=True, model=User)
         else:
@@ -28,9 +29,9 @@ class UserViewSet(viewsets.ViewSet):
 
     def create(self, request):
         user_type = request.data.get('user_type', None)
-        if user_type == 'STUDENT':
+        if user_type == USER_TYPE_STUDENT:
             serializer = StudentSerializer(data=request.data, model=Student)
-        elif user_type == 'TEACHER':
+        elif user_type == USER_TYPE_TEACHER:
             serializer = TeacherSerializer(data=request.data, model=Teacher)
         else:
             serializer = UserSerializer(data=request.data, model=User)

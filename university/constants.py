@@ -1,0 +1,2 @@
+USER_TYPE_STUDENT = 'Student'
+USER_TYPE_TEACHER = 'Teacher'
