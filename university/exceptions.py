@@ -19,3 +19,21 @@ class ResourceException(UMSAPIException):
     severity = ERROR
     status_code = 422
     default_code = "RESOURCE_EXCEPTION"
+
+
+class ValidationException(UMSAPIException):
+    severity = ERROR
+    status_code = 400
+    default_code = "VALIDATION_EXCEPTION"
+
+
+class NotFoundException(UMSAPIException):
+    severity = ERROR
+    status_code = 404
+    default_code = "NOT_FOUND_EXCEPTION"
+
+
+class DatabaseException(UMSAPIException):
+    severity = CRITICAL
+    status_code = 500
+    default_code = "DATABASE_EXCEPTION"

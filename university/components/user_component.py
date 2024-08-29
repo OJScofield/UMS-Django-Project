@@ -1,6 +1,6 @@
-from university.exceptions import ResourceException
+from university.exceptions import ResourceException, DatabaseException
+from university.models import User
 from university.repositories import UserRepository
-from university.serializers import StudentSerializer, TeacherSerializer, UserSerializer
 from university.constants import USER_TYPE_STUDENT, USER_TYPE_TEACHER
 
 class UserComponent:
@@ -14,31 +14,43 @@ class UserComponent:
             return UserRepository.get_all_users()
 
     def get_user_by_id(self, user_id):
-        user = UserRepository.get_user_by_id(user_id)
-        if not user:
+        try:
+            user = UserRepository.get_user_by_id(user_id)
+            return user
+        except User.DoesNotExist:
             raise ResourceException(f"User with id {user_id} not found.")
-        return user
+        except Exception as e:
+            raise DatabaseException(f"Error retrieving user with id {user_id}: {str(e)}")
 
-    def get_serializer_class(self, user_type):
-        if user_type == USER_TYPE_STUDENT:
-            return StudentSerializer
-        elif user_type == USER_TYPE_TEACHER:
-            return TeacherSerializer
-        return UserSerializer
-
-    def create_user(self, serializer):
-        serializer.save()
+    def create_user(self, user_data):
+        try:
+            return UserRepository.create_user(user_data)
+        except Exception as e:
+            raise DatabaseException(f"Error creating user: {str(e)}")
 
     def update_user_by_id(self, user_id, first_name, last_name):
-        user = UserRepository.get_user_by_id(user_id=user_id)
-        if not user:
+        try:
+            user = UserRepository.get_user_by_id(user_id=user_id)
+            UserRepository.update_user_by_id(user_id=user_id, first_name=first_name, last_name=last_name)
+        except User.DoesNotExist:
             raise ResourceException(f"User with id {user_id} not found.")
-        UserRepository.update_user_by_id(user_id=user_id, first_name = first_name,  last_name=last_name)
-
+        except Exception as e:
+            raise DatabaseException(f"Error updating user with id {user_id}: {str(e)}")
 
     def delete_user_by_id(self, user_id):
-        user = UserRepository.get_user_by_id(user_id)
-        if not user:
+        try:
+            user = UserRepository.get_user_by_id(user_id)
+            UserRepository.delete_user(user)
+        except User.DoesNotExist:
             raise ResourceException(f"User with id {user_id} not found.")
-        user.delete()
-        return True
+        except Exception as e:
+            raise DatabaseException(f"Error deleting user with id {user_id}: {str(e)}")
+
+    def get_total_students(self):
+        return UserRepository.get_total_students()
+
+    def get_total_teachers(self):
+        return UserRepository.get_total_teachers()
+
+    def get_total_users(self):
+        return UserRepository.get_total_users()

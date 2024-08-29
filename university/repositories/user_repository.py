@@ -16,10 +16,13 @@ class UserRepository:
 
     @staticmethod
     def get_user_by_id(user_id):
-        try:
-            return User.objects.get(pk=user_id)
-        except User.DoesNotExist:
-            return None
+        return User.objects.get(pk=user_id)
+
+    @staticmethod
+    def create_user(user_data):
+        user = User(**user_data)
+        user.save()
+        return user
 
     @staticmethod
     def update_user_by_id(user_id, first_name, last_name):
@@ -28,3 +31,19 @@ class UserRepository:
         user.last_name = last_name
         user.save()
         return user
+
+    @staticmethod
+    def delete_user(user):
+        user.delete()
+
+    @staticmethod
+    def get_total_students():
+        return Student.objects.count()
+
+    @staticmethod
+    def get_total_teachers():
+        return Teacher.objects.count()
+
+    @staticmethod
+    def get_total_users():
+        return User.objects.count()
