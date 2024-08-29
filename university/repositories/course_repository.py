@@ -27,3 +27,7 @@ class CourseRepository:
     @staticmethod
     def delete_course(course):
         course.delete()
+
+    @staticmethod
+    def get_total_courses():
+        return Course.objects.count()

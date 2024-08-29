@@ -27,3 +27,7 @@ class RoleRepository:
     @staticmethod
     def delete_role(role):
         role.delete()
+
+    @staticmethod
+    def get_total_roles():
+        return Role.objects.count()

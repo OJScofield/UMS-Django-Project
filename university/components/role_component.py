@@ -39,3 +39,7 @@ class RoleComponent:
         except Exception as e:
             raise DatabaseException(f"Error deleting role with id {role_id}: {str(e)}")
         return True
+
+    def get_total_roles(self):
+        return RoleRepository.get_total_roles()
+

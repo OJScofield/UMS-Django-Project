@@ -39,3 +39,6 @@ class CourseComponent:
         except Exception as e:
             raise DatabaseException(f"Error deleting course with id {course_id}: {str(e)}")
         return True
+
+    def get_total_courses(self):
+        return CourseRepository.get_all_courses()
