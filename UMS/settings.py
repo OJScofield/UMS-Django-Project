@@ -152,3 +152,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # 		},
 # 	},
 # }
+
+
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'UMS.common.exception_handler.ums_exception_handler',
+}

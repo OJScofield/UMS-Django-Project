@@ -5,17 +5,27 @@ from university.serializers import TeacherCourseSemesterSerializer
 
 class TeacherCourseSemesterViewSet(viewsets.ViewSet):
 
+    def get_serializer(self, queryset, many=False, fields=None):
+        return TeacherCourseSemesterSerializer(queryset, many=many, model=TeacherCourseSemester, fields=fields)
+
     def list(self, request):
+        fields = request.query_params.get('fields', None)
+        fields = fields.split(',') if fields else None
+
         queryset = TeacherCourseSemester.objects.all()
-        serializer = TeacherCourseSemesterSerializer(queryset, many=True, model=TeacherCourseSemester)
+        serializer = self.get_serializer(queryset, many=True, fields=fields)
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
+        fields = request.query_params.get('fields', None)
+        fields = fields.split(',') if fields else None
+
         try:
             teacher_course_semester = TeacherCourseSemester.objects.get(pk=pk)
         except TeacherCourseSemester.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = TeacherCourseSemesterSerializer(teacher_course_semester, model=TeacherCourseSemester)
+
+        serializer = self.get_serializer(teacher_course_semester, fields=fields)
         return Response(serializer.data)
 
     def create(self, request):

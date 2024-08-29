@@ -5,17 +5,27 @@ from university.serializers import RoleSerializer
 
 class RoleViewSet(viewsets.ViewSet):
 
+    def get_serializer(self, queryset, many=False, fields=None):
+        return RoleSerializer(queryset, many=many, model=Role, fields=fields)
+
     def list(self, request):
+        fields = request.query_params.get('fields', None)
+        fields = fields.split(',') if fields else None
+
         queryset = Role.objects.all()
-        serializer = RoleSerializer(queryset, many=True, model=Role)
+        serializer = self.get_serializer(queryset, many=True, fields=fields)
         return Response(serializer.data)
 
     def retrieve(self, request, pk=None):
+        fields = request.query_params.get('fields', None)
+        fields = fields.split(',') if fields else None
+
         try:
             role = Role.objects.get(pk=pk)
         except Role.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = RoleSerializer(role, model=Role)
+
+        serializer = self.get_serializer(role, fields=fields)
         return Response(serializer.data)
 
     def create(self, request):
