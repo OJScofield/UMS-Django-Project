@@ -1,4 +1,5 @@
-from university.models import Course
+from university.models import Course, StudentTeacherCourseSemester
+
 
 class CourseRepository:
 
@@ -31,3 +32,15 @@ class CourseRepository:
     @staticmethod
     def get_total_courses():
         return Course.objects.count()
+
+    @staticmethod
+    def get_courses_by_student_id(student_id):
+        teacher_course_semesters = StudentTeacherCourseSemester.objects.filter(
+            student_id=student_id
+        ).values_list('teacher_course_semester', flat=True)
+
+        courses = Course.objects.filter(
+            teachercoursesemester__in=teacher_course_semesters
+        ).distinct()
+
+        return courses

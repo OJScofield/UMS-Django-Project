@@ -1,32 +1,58 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from university.constants import *
-from university.serializers import UserSerializer, StudentSerializer, TeacherSerializer
-from university.components import UserComponent, RoleComponent, CourseComponent
-
+from university.constants import USER_TYPE_STUDENT, USER_TYPE_TEACHER
+from university.serializers import UserSerializer, StudentSerializer, TeacherSerializer, CourseSerializer
+from university.components import UserComponent, CourseComponent, RoleComponent
 
 class UserViewSet(viewsets.ViewSet):
 
     def get_serializer(self, queryset, many=False, fields=None):
-        return UserSerializer(queryset, many=many, model=UserSerializer.Meta.model, fields=fields)
+        if fields is not None:
+            return UserSerializer(queryset, many=many, model=UserSerializer.Meta.model, fields=fields)
+        return UserSerializer(queryset, many=many, model=UserSerializer.Meta.model)
 
     def list(self, request):
         user_type = request.query_params.get('user_type', None)
-        fields = request.query_params.get('fields', None)
-        fields = fields.split(',') if fields else None
 
-        users = UserComponent().get_all_users(user_type=user_type)
+        fields = ['id', 'first_name', 'last_name', 'email']
+
+        if user_type == USER_TYPE_STUDENT:
+            users = UserComponent().get_all_users(user_type=USER_TYPE_STUDENT)
+        elif user_type == USER_TYPE_TEACHER:
+            users = UserComponent().get_all_users(user_type=USER_TYPE_TEACHER)
+        else:
+            users = UserComponent().get_all_users()
+
+        if not users:
+            return Response({'detail': 'No users found.'}, status=status.HTTP_404_NOT_FOUND)
+
         serializer = self.get_serializer(users, many=True, fields=fields)
-        return Response(serializer.data)
+        user_data = serializer.data
+
+        if user_type == USER_TYPE_STUDENT:
+            for user in user_data:
+                courses = CourseComponent().get_courses_by_student_id(user['id'])
+                course_serializer = CourseSerializer(courses, many=True)
+                user['courses'] = course_serializer.data
+
+        return Response(user_data)
 
     def retrieve(self, request, pk=None):
-        fields = request.query_params.get('fields', None)
-        fields = fields.split(',') if fields else None
         user_id = int(pk)
+        fields = ['id', 'first_name', 'last_name', 'email']
+
         user = UserComponent().get_user_by_id(user_id=user_id)
         serializer = self.get_serializer(user, fields=fields)
-        return Response(serializer.data)
+        user_data = serializer.data
+
+        # Check if the user is a student and include their courses
+        if UserComponent().is_student(user_id):
+            courses = CourseComponent().get_courses_by_student_id(user_id)
+            course_serializer = CourseSerializer(courses, many=True)
+            user_data['courses'] = course_serializer.data
+
+        return Response(user_data)
 
     def create(self, request):
         user_type = request.data.get('user_type', None)
@@ -66,6 +92,7 @@ class UserViewSet(viewsets.ViewSet):
         total_teachers = UserComponent().get_total_teachers()
         total_roles = RoleComponent().get_total_roles()
         total_courses = CourseComponent().get_total_courses()
+
         overview_data = {
             'total_users': total_users,
             'total_students': total_students,

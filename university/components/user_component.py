@@ -1,5 +1,5 @@
 from university.exceptions import ResourceException, DatabaseException
-from university.models import User
+from university.models import User, Student
 from university.repositories import UserRepository
 from university.constants import USER_TYPE_STUDENT, USER_TYPE_TEACHER
 
@@ -54,3 +54,6 @@ class UserComponent:
 
     def get_total_users(self):
         return UserRepository.get_total_users()
+
+    def is_student(self, user_id):
+        return Student.objects.filter(user_id=user_id).exists()

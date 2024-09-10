@@ -1,5 +1,5 @@
 from university.exceptions import ResourceException, DatabaseException
-from university.models import Course
+from university.models import Course, StudentTeacherCourseSemester
 from university.repositories import CourseRepository
 
 class CourseComponent:
@@ -41,4 +41,7 @@ class CourseComponent:
         return True
 
     def get_total_courses(self):
-        return CourseRepository.get_all_courses()
+        return CourseRepository.get_total_courses()
+
+    def get_courses_by_student_id(self, student_id):
+        return CourseRepository.get_courses_by_student_id(student_id)
